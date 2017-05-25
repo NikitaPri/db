@@ -26,5 +26,5 @@ CREATE TABLE P_CUSTOMERS(
 CONSTRAINT phone_check
   CHECK (REGEXP_LIKE (PHONE, '^\(\d{3}\) \d{3}-\d{4}$')),
 CONSTRAINT email_check
-  CHECK (REGEXP_LIKE (EMAIL, '\w+@\w+(\.\w+)+')
+  CHECK (REGEXP_LIKE (EMAIL, '\w+@\w+(\.\w+)+'))
 );
