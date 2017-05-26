@@ -10,18 +10,24 @@ END CLIENTAPI;
 /
 CREATE OR REPLACE PACKAGE BODY CLIENTAPI AS
 
-  PROCEDURE BUYPRODUCT(CODE NUMBER, AMOUNT NUMBER)
+  CREATE OR REPLACE PACKAGE procedures AS
+ PROCEDURE BUYPRODUCT(CODE NUMBER, AMOUNT NUMBER, CARD_NUMBER NUMBER, PAIMENT_TYPE NUMBER);
+
+END procedures;
+/
+CREATE OR REPLACE PACKAGE BODY procedures AS
+PROCEDURE BUYPRODUCT(CODE NUMBER, AMOUNT NUMBER, CARD_NUMBER NUMBER, PAIMENT_TYPE NUMBER)
   AS
   already_exists NUMBER;
+  amount NUMBER;
   cur_date DATE;
   BEGIN
-    SELECT COUNT(*) INTO already_exists FROM LOGIN_PASSWORD WHERE "Login"=client_login;
-    IF (already_exists = 0) THEN
-      SELECT TO_CHAR(SYSDATE, 'DD.MM.YYYY') INTO cur_date  FROM DUAL;
-      IF (UTILS.VerifyHumanName(client_name) AND UTILS.VerifyEmail(client_email) AND UTILS.VerifyPhone(client_phone)) THEN
-        BEGIN
-          INSERT INTO LOGIN_PASSWORD ("Login", "Password") VALUES (client_login, client_password);
-          INSERT INTO CLIENTS ("Id", "Name", "RegisterDate", "Login", "Phone", "Email", "OrdersAmount", "OrdersCancelledAmount") VALUES (CLIENTS_SEQ.NEXTVAL, client_name, cur_date, client_login, client_phone, client_email, 0, 0);
+    SELECT COUNT(*) INTO already_exists FROM P_PRODUCTS WHERE "CODE"=CODE;
+    IF (already_exists != 0) AND (AMOUNT>=1) THEN
+          SELECT TO_CHAR(SYSDATE, 'DD.MM.YYYY') INTO cur_date  FROM DUAL;
+          INSERT INTO P_SOLD ("CODE", "DATE", "AMOUNT", "CARD_NUMBER", "PAIMENT_TYPE") VALUES (CODE, cur_date, AMOUNT, CARD_NUMBER, PAIMENT_TYPE);
+          SELECT AMOUNT_LEFT INTO amount FROM P_PRODUCTSIN WHERE "CODE"=CODE;
+          UPDATE P_PRODUCTSIN SET "AMOUNT_LEFT"=(amount-AMOUNT) WHERE "CODE"=CODE;
           COMMIT;
         END;
       ELSE
@@ -33,7 +39,8 @@ CREATE OR REPLACE PACKAGE BODY CLIENTAPI AS
   EXCEPTION
       WHEN OTHERS THEN
         DBMS_OUTPUT.put_line('ERROR: NONE OF ARGS COULD BE NULL');
-  END AddClient;
+  END BUYPRODUCT;
+  
 
   PROCEDURE CreateOrder(order_id NVARCHAR2, address NVARCHAR2, client_login NVARCHAR2, product_name NVARCHAR2, amount NUMBER)
   AS
