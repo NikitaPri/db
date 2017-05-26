@@ -48,8 +48,8 @@ FUNCTION BUYPRODUCT(CODE NUMBER, AMOUNT NUMBER, CARD_NUMBER NUMBER, PAIMENT_TYPE
             END IF;
             SELECT "NAME" INTO NAME_T FROM p_products WHERE "CODE"=fcode;
             SELECT "UNITS" INTO UNITS_T FROM P_PRODUCTS WHERE "CODE"=fcode;
-              RES:= RES || 'NAME' || NAME_T || 'UNITS' || UNITS_T || 
-              'PRICE FOR ONE' ||PRICE_TMP || 'TOTAL PRICE' || price_t ||';\n';
+              RES:= RES || '  NAME: ' || NAME_T || '  UNITS:  ' || UNITS_T || 
+              ' PRICE FOR ONE:  ' ||PRICE_TMP || '  TOTAL PRICE:  ' || price_t ||';\n';
               INSERT INTO P_SOLD("CODE", "DATE_T", "AMOUNT", "TOTAL_PRICE", "CARD_NUMBER", "PAIMENT_TYPE") VALUES (CODE, cur_date, AMOUNT, price_t, CARD_NUMBER, PAIMENT_TYPE);
               COMMIT;
               RETURN RES;
