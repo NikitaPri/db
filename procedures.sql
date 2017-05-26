@@ -10,7 +10,7 @@ END CLIENTAPI;
 /
 CREATE OR REPLACE PACKAGE BODY CLIENTAPI AS
 
-  PROCEDURE AddClient(client_name NVARCHAR2, client_email NVARCHAR2, client_phone NVARCHAR2, client_login NVARCHAR2, client_password NVARCHAR2)
+  PROCEDURE BUYPRODUCT(CODE NUMBER, AMOUNT NUMBER)
   AS
   already_exists NUMBER;
   cur_date DATE;
