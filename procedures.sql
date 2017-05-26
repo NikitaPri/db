@@ -29,12 +29,13 @@ FUNCTION BUYPRODUCT(CODE NUMBER, AMOUNT NUMBER, CARD_NUMBER NUMBER, PAIMENT_TYPE
   BEGIN
     SELECT COUNT(*) INTO already_exists FROM P_PRODUCTS WHERE "CODE"=CODE;
     FCODE:=CODE;
+    SELECT SYSDATE INTO cur_date  FROM DUAL;
     IF (already_exists != 0 AND AMOUNT>=1) THEN
-          SELECT SYSDATE INTO cur_date  FROM DUAL;
-          SELECT "AMOUNT_LEFT" INTO new_amount FROM P_PRODUCTSIN WHERE "CODE"=CODE;
+          
+          SELECT "AMOUNT_LEFT" INTO new_amount FROM P_PRODUCTSIN WHERE "CODE"=fcode;
           UPDATE P_PRODUCTSIN SET "AMOUNT_LEFT"=(new_amount-AMOUNT) WHERE "CODE"=fcode;
           IF (CARD_NUMBER!=NULL) THEN
-            SELECT COUNT(*) INTO already_exists_c FROM P_PCUSTOMERS WHERE "CARD_NUMBER"=CARD_NUMBER;
+            SELECT COUNT(*) INTO already_exists_c FROM P_CUSTOMERS WHERE "CARD_NUMBER"=CARD_NUMBER;
             IF (already_exists_c!=0) THEN
                 SELECT "CARD_SALE_PRICE" INTO price_tmp FROM P_PRICE WHERE "CODE"=fcode;
                 price_t:=price_tmp*AMOUNT;
